@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="629865a8-b714-4f48-9bf5-1c26f1fc5017" basePath="/course/api">
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<apikit:config outboundHeadersMapName="outboundHeadersMapName" httpStatusVarName="httpStatus" doc:name="Router" doc:id="42dd98b6-c8d7-4059-8b31-c2bc8334b6e1" name="RouterRest" api="api\rest-api.raml" >
+		<apikit:flow-mappings >
+			<apikit:flow-mapping resource="/api-health" action="get" flow-ref="api-healthFlow" />
+			<apikit:flow-mapping resource="/demo-01/rest" action="get" flow-ref="demo-01-rest-flow" />
+			<apikit:flow-mapping resource="/demo-01/soap" action="get" flow-ref="demo-01-soap-flow" />
+		</apikit:flow-mappings>
+	</apikit:config>
+	<apikit:config outboundHeadersMapName="outboundHeadersMapName" httpStatusVarName="httpStatus" doc:name="Router" doc:id="427b9b78-9ace-4f02-aed3-346bd88003c5" name="RouterComponents" api="api\components-api.raml" >
+	</apikit:config>
+	<http:request-config name="SFDC_AUTH" doc:name="HTTP Request configuration" doc:id="dc9bce1b-0a7a-47f4-9472-4ca3fc1edd74">
+		<http:request-connection host="${sfdc.auth.host}" protocol="HTTPS"/>
+	</http:request-config>
+	<configuration-properties doc:name="Configuration properties" doc:id="4a071416-ec44-48e4-bea9-cbe42f8e0cfe" file="config/global.yaml" />
+	<global-property doc:name="Global Property" doc:id="6d142964-4e93-40d6-bf17-4ba38e349aeb" name="env" value="local" />
+	<configuration-properties doc:name="Configuration properties" doc:id="4fa2faad-d7fd-46f4-ab62-a384d23c2cd4" file="config/config_${env}.yaml" />
+</mule>
