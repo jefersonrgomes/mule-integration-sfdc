@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<flow name="demo-03-consult-flow"
+		doc:id="beff3d23-4e52-48f9-a122-0996a9380da4">
+		<set-variable doc:name="Query" doc:id="b8afd9c1-8b74-4799-b314-a3f148a7f758" variableName="query" value="#[vars.requestPayload.select]"/>
+		<flow-ref doc:name="realiza-autenticacao-sfdc" doc:id="f5520bb5-c3ee-46c2-8b97-0307004f577c" name="demo-01-rest-flow" target="sfdc_token" targetValue="#[payload.access_token]"/>
+		<http:request method='GET' doc:name="Request SFDC ENDPOINT"
+			doc:id="cb992e0d-eebc-4739-a3b2-d190aa0bd89a"
+			path="${sfdc.endpoint.basepath}${sfdc.endpoint.version}${sfdc.endpoint.path.consult}" config-ref="SFDC_ENDPOINT">
+			<http:body ><![CDATA[#[{}]]]></http:body>
+			<http:headers ><![CDATA[#[{
+	Authorization: "Bearer " ++ vars.sfdc_token
+}]]]></http:headers>
+			<http:query-params ><![CDATA[#[{
+	q : vars.query
+}]]]></http:query-params>
+		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="4117efbf-1fa1-4c8a-bc6f-299d733dfd53" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload.records map ($ - "attributes")]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

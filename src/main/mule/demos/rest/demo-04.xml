@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<flow name="demo-04-batch-v2-flow"
+		doc:id="252a2199-f6fa-48bc-945b-f92b97b66b2d">
+		<flow-ref doc:name="realiza-autenticacao-sfdc" doc:id="51987c0a-49fe-4f2c-96aa-9d8bd7e71868" name="demo-01-rest-flow" target="sfdc_token" targetValue="#[payload.access_token]" />
+		
+		<ee:transform 
+		doc:name="build-body"
+		doc:id="29ab8143-90d9-4048-8c30-9dd6ecf6266e">
+			<ee:message>
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "object" : "Account",
+  "contentType" : "CSV",
+  "operation" : "insert",
+  "lineEnding": "CRLF"
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+			</ee:variables>
+		</ee:transform>
+		<http:request method="POST" doc:name="create-job" doc:id="cdc5e4ce-d99c-4f2f-9bce-34d62ab69310" config-ref="SFDC_ENDPOINT" path="/services/data/v51.0/jobs/ingest" target="job_id" targetValue="#[payload.id]">
+			<http:headers ><![CDATA[#[{
+	"Authorization" : "Bearer " ++ vars.sfdc_token as String
+}]]]></http:headers>
+		</http:request>
+		<ee:transform doc:name="build-csv"
+			doc:id="532778df-97c1-462a-ad44-f73afb484511">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output text/csv lineSeparator = "\r\n"
+---
+vars.requestPayload map({
+	name: $.nome
+})]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<http:request method="PUT" doc:name="upload-data" doc:id="6ff92f08-2114-4271-9a35-4548d37ebace" config-ref="SFDC_ENDPOINT" path="/services/data/v51.0/jobs/ingest/{jobId}/batches">
+			<http:headers><![CDATA[#[{
+	"Authorization" : "Bearer " ++ vars.sfdc_token as String
+}]]]></http:headers>
+			<http:uri-params ><![CDATA[#[{
+	jobId: vars.job_id
+}]]]></http:uri-params>
+		</http:request>
+		<ee:transform doc:name="build-state-upload" doc:id="b4794cee-a80d-488b-bad3-2ff214abdd6c" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	state: "UploadComplete"	
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+			</ee:variables>
+		</ee:transform>
+		<http:request method="PATCH" doc:name="completed-job" doc:id="9ea105da-cca1-467a-9804-62b6e36eb387" config-ref="SFDC_ENDPOINT" path="/services/data/v51.0/jobs/ingest/{jobId}">
+			<http:headers ><![CDATA[#[{
+	"Authorization" : "Bearer " ++ vars.sfdc_token as String
+}]]]></http:headers>
+			<http:uri-params ><![CDATA[#[{
+	jobId: vars.job_id
+}]]]></http:uri-params>
+		</http:request>
+		<ee:transform doc:name="build-output" doc:id="f145b5d3-132a-4401-9d56-9b48fcb3b8fe" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	id: payload.id,
+	status: "Created"
+}
+]]></ee:set-payload>
+			</ee:message>
+			<ee:variables />
+		</ee:transform>
+	</flow>
+</mule>
