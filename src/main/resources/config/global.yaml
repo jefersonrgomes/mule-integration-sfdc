@@ -1,4 +1,0 @@
-api:
-  config:
-    basepath: "course"
-    port: "8081"
