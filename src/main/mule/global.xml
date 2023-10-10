@@ -23,6 +23,9 @@ http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mu
 		<apikit:flow-mappings >
 			<apikit:flow-mapping resource="/demo-component-01" action="get" flow-ref="demo-component-01Flow" />
 			<apikit:flow-mapping resource="/demo-component-02" action="post" flow-ref="demo-component-02Flow" />
+			<apikit:flow-mapping resource="/demo-component-03" action="post" flow-ref="demo-component-03Flow" />
+			<apikit:flow-mapping resource="/demo-component-04" action="post" flow-ref="demo-component-04Flow" />
+			<apikit:flow-mapping resource="/demo-component-05" action="get" flow-ref="demo-component-05Flow" />
 		</apikit:flow-mappings>
 	</apikit:config>
 	<http:request-config name="SFDC_AUTH" doc:name="HTTP Request configuration" doc:id="dc9bce1b-0a7a-47f4-9472-4ca3fc1edd74">
