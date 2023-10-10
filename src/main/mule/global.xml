@@ -14,7 +14,6 @@ http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mu
 			<apikit:flow-mapping resource="/api-health" action="get" flow-ref="api-healthFlow" />
 			<apikit:flow-mapping resource="/demo-01/rest" action="get" flow-ref="demo-01-rest-flow" />
 			<apikit:flow-mapping resource="/demo-01/soap" action="get" flow-ref="demo-01-soap-flow" />
-			<apikit:flow-mapping resource="/demo-02/inserir" action="post" flow-ref="demo-02-insert-flow" />
 			<apikit:flow-mapping resource="/demo-02/insert" action="post" flow-ref="demo-02-insert-flow" />
 			<apikit:flow-mapping resource="/demo-03/consultar" action="post" flow-ref="demo-03-consult-flow" />
 			<apikit:flow-mapping resource="/demo-04/batch/v2" action="post" flow-ref="demo-04-batch-v2-flow" />
@@ -23,6 +22,7 @@ http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mu
 	<apikit:config outboundHeadersMapName="outboundHeadersMapName" httpStatusVarName="httpStatus" doc:name="Router" doc:id="427b9b78-9ace-4f02-aed3-346bd88003c5" name="RouterComponents" api="api\components-api.raml" >
 		<apikit:flow-mappings >
 			<apikit:flow-mapping resource="/demo-component-01" action="get" flow-ref="demo-component-01Flow" />
+			<apikit:flow-mapping resource="/demo-component-02" action="post" flow-ref="demo-component-02Flow" />
 		</apikit:flow-mappings>
 	</apikit:config>
 	<http:request-config name="SFDC_AUTH" doc:name="HTTP Request configuration" doc:id="dc9bce1b-0a7a-47f4-9472-4ca3fc1edd74">

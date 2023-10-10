@@ -8,14 +8,10 @@
 	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
-	<flow name="demo-02-insert-flow"
-		doc:id="beff3d23-4e52-48f9-a122-0996a9380da4">
-		<set-variable value="Account" doc:name="objectName" doc:id="b8afd9c1-8b74-4799-b314-a3f148a7f758" variableName="objectName"/>
-		<flow-ref doc:name="realiza-autenticacao-sfdc" doc:id="f5520bb5-c3ee-46c2-8b97-0307004f577c" name="demo-01-rest-flow" target="sfdc_token" targetValue="#[payload.access_token]"/>
-		
-		<ee:transform 
-		doc:name="build-body" 
-		doc:id="b81bc3fb-d488-4a10-b9c7-f5e3fc0a9e29" >
+	<flow name="demo-02-insert-flow" doc:id="05c7210e-33ea-4d58-a5b8-9600de1dd4af" >
+		<set-variable value="Account" doc:name="objectName" doc:id="324e630a-cac8-4e6c-9c66-2a67b7f746d2" variableName="objectName" />
+		<flow-ref doc:name="realiza-autenticacao-sfdc" doc:id="4de321bf-b0ed-4924-94b2-c22b36f4fcfa" name="demo-01-rest-flow" target="sfdc_token" targetValue="#[payload.access_token]" />
+		<ee:transform doc:name="build-body" doc:id="ef14a532-ffec-4438-a719-532a52259535" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
@@ -27,9 +23,7 @@ output application/json
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<http:request method='POST' doc:name="request-sfdc-endpoint"
-			doc:id="cb992e0d-eebc-4739-a3b2-d190aa0bd89a"
-			path="${sfdc.endpoint.basepath}${sfdc.endpoint.version}${sfdc.endpoint.path.insert}{object_name}" config-ref="SFDC_ENDPOINT">
+		<http:request method="POST" doc:name="request-sfdc-endpoint" doc:id="56589dfd-ac77-44d8-9361-15fa1f532667" config-ref="SFDC_ENDPOINT" path="${sfdc.endpoint.basepath}${sfdc.endpoint.version}${sfdc.endpoint.path.insert}{object_name}" >
 			<http:headers ><![CDATA[#[{
 	Authorization: "Bearer " ++ vars.sfdc_token
 }]]]></http:headers>

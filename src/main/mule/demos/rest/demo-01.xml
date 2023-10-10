@@ -9,7 +9,7 @@
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 	<flow name="demo-01-rest-flow"
-		doc:id="beff3d23-4e52-48f9-a122-0996a9380da4">
+		doc:id="53943f1b-aaec-4c37-9b07-54b08d30d6b7">
 		<ee:transform doc:name="build-object-login"
 			doc:id="29ab8143-90d9-4048-8c30-9dd6ecf6266e">
 			<ee:message>
